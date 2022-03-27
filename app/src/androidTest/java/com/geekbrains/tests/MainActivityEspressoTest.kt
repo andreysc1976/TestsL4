@@ -32,20 +32,38 @@ class MainActivityEspressoTest {
         onView(withId(R.id.searchEditText)).perform(replaceText("algol"), closeSoftKeyboard())
         onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
 
-        if (BuildConfig.TYPE == MainActivity.FAKE) {
-            onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 42")))
-        } else {
-            onView(isRoot()).perform(delay())
-            onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2283")))
-        }
+        onView(isRoot()).perform(delay())
+        onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2283")))
+
+        onView(isRoot()).perform(delay(1000))
     }
 
-    private fun delay(): ViewAction? {
+    @Test
+    fun testMainActivityElementUISearch()
+    {
+        onView(withId(R.id.toDetailsActivityButton)).check(matches(isDisplayed()))
+        onView(withId(R.id.toDetailsActivityButton)).check(matches(withText("TO DETAILS")))
+
+        onView(withId(R.id.searchEditText)).check(matches(isDisplayed()))
+
+    }
+
+    @Test
+    fun testMainActivityElementUIDetail()
+    {
+        onView(withId(R.id.toDetailsActivityButton)).perform(click())
+        onView(withId(R.id.decrementButton)).check(matches(isDisplayed()))
+        onView(withId(R.id.totalCountTextView)).check(matches(isDisplayed()))
+        onView(withId(R.id.incrementButton)).check(matches(isDisplayed()))
+
+    }
+
+    private fun delay(value:Long=5000): ViewAction? {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> = isRoot()
             override fun getDescription(): String = "wait for $2 seconds"
             override fun perform(uiController: UiController, v: View?) {
-                uiController.loopMainThreadForAtLeast(2000)
+                uiController.loopMainThreadForAtLeast(value)
             }
         }
     }
